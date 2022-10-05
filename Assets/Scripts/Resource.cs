@@ -8,12 +8,13 @@ public class Resource : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
     private Vector2 dragOffset;
     public Transform parentReturn = null;
 
+    private Request request;
+
     public enum ResourceType { none, blue, red, yellow, green };
     public ResourceType resourceType = ResourceType.blue;
 
     public Image image;
 
-    public bool isDragged = false;
 
     private void Update()
     {
@@ -55,9 +56,12 @@ public class Resource : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
         this.transform.SetParent(this.transform.parent.parent);
 
         GetComponent<CanvasGroup>().blocksRaycasts = false;
-        //Request request = parentReturn.name;
-        isDragged = true;
-
+        if (parentReturn.parent.tag == "Request")
+        {
+            request = parentReturn.parent.GetComponent<Request>();
+            request.OnPickup();
+            request = null;
+        }
     }
 
     public void OnDrag(PointerEventData eventData)
@@ -74,6 +78,6 @@ public class Resource : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
         this.transform.SetParent(parentReturn);
 
         GetComponent<CanvasGroup>().blocksRaycasts = true;
-        isDragged = false;
+        //null Request request
     }
 }

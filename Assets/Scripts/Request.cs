@@ -77,8 +77,8 @@ public class Request : MonoBehaviour, IDropHandler
 
     public void OnDrop(PointerEventData eventData)
     {
-        Debug.Log(eventData.pointerDrag.name + " was dropped on " + gameObject.name);
         resource = eventData.pointerDrag.GetComponent<Resource>();
+        Debug.Log(resource.name + " was dropped on " + gameObject.name);
         if (resource != null)
         {
             for (int i = 0; i < requirements.Length; i++)
@@ -91,7 +91,7 @@ public class Request : MonoBehaviour, IDropHandler
                     return;
                 }
             }
-            if (resource.parentReturn != cardHolder.transform)
+            /*if (resource.parentReturn != cardHolder.transform)
             {
                 for (int i = 0; i < requirements.Length; i++)
                 {
@@ -99,21 +99,18 @@ public class Request : MonoBehaviour, IDropHandler
                     {
                         requirements[i] = fulfilledReqs[i];
                         fulfilledReqs[i] = Resource.ResourceType.none;
-                        //resource.pickedUp = false;
+                        resource = null;
                         return;
                     }
                 }
-            }
-
+            }*/
         }
     }
 
-
     public void OnPickup()
     {
-        //Debug.Log(eventData.pointerDrag.name + " was picked up from top of " + gameObject.name);
-        //resource = eventData.pointerDrag.GetComponent<Resource>();
-        if (resource != null)
+        Debug.Log(resource.name + " was picked up from top of " + gameObject.name);
+        if (resource != null) // && resource.parentReturn != cardHolder.transform)
         {
             for (int i = 0; i < requirements.Length; i++)
             {
@@ -121,7 +118,6 @@ public class Request : MonoBehaviour, IDropHandler
                 {
                     requirements[i] = fulfilledReqs[i];
                     fulfilledReqs[i] = Resource.ResourceType.none;
-                    //resource.pickedUp = false;
                     return;
                 }
             }

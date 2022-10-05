@@ -197,7 +197,7 @@ GameObject:
   - component: {fileID: 2074215600332667560}
   m_Layer: 5
   m_Name: RequestCard
-  m_TagString: Untagged
+  m_TagString: Request
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

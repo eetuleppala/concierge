@@ -192,7 +192,6 @@ MonoBehaviour:
   parentReturn: {fileID: 8288916719670408754, guid: c0d2b42b477a84760a5a202f1e7a5aed, type: 3}
   resourceType: 1
   image: {fileID: 6053791704284430315}
-  isDragged: 0
 --- !u!225 &1979735284884762542
 CanvasGroup:
   m_ObjectHideFlags: 0
