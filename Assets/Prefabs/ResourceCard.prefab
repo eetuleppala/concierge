@@ -87,8 +87,9 @@ GameObject:
   - component: {fileID: 6053791705346837998}
   - component: {fileID: 6053791705346837996}
   - component: {fileID: 6053791705346837997}
-  - component: {fileID: 6053791705346837995}
   - component: {fileID: 4952919433564704173}
+  - component: {fileID: 1662247357068545321}
+  - component: {fileID: 1979735284884762542}
   m_Layer: 5
   m_Name: ResourceCard
   m_TagString: Untagged
@@ -156,18 +157,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &6053791705346837995
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6053791705346837999}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 16418177bb66d4f048c9f0cbabbc9fbf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &4952919433564704173
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -188,6 +177,34 @@ MonoBehaviour:
   m_FlexibleWidth: 1
   m_FlexibleHeight: 1
   m_LayoutPriority: 1
+--- !u!114 &1662247357068545321
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6053791705346837999}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 16418177bb66d4f048c9f0cbabbc9fbf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  parentReturn: {fileID: 8288916719670408754, guid: c0d2b42b477a84760a5a202f1e7a5aed, type: 3}
+  resourceType: 1
+  image: {fileID: 6053791704284430315}
+  isDragged: 0
+--- !u!225 &1979735284884762542
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6053791705346837999}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &6053791705399310926
 GameObject:
   m_ObjectHideFlags: 0

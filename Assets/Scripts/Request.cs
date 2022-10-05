@@ -2,39 +2,68 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
+using TMPro;
 
-public class Request : MonoBehaviour
+public class Request : MonoBehaviour, IDropHandler
 {
+    public Resource.ResourceType[] requirements = new Resource.ResourceType[3];
+    public Resource.ResourceType[] fulfilledReqs = new Resource.ResourceType[3];
 
-    private Color[] colors = new Color[3];
-    public GameObject[] images = new GameObject[3];
+    public Image[] images;
+    public Image cardHolder;
+
+    public TMP_Text debugText;
+
+    private Resource resource;
 
     private void Start()
     {
-        CreateColorArray();
-        AssignColors();
+        CreateRequirements();
     }
 
-    private void CreateColorArray()
+    private void Update()
+    {
+        debugText.text =
+            "requirements: "
+            + requirements[0]
+            + ", " + requirements[1]
+            + ", " + requirements[2]
+            + "; fulfilledReqs: "
+            + fulfilledReqs[0]
+            + ", " + fulfilledReqs[1]
+            + ", " + fulfilledReqs[2];
+
+        //if (resource != null && resource.pickedUp == true)
+        //{
+        //    OnPickup();
+        //}
+    }
+
+    private void CreateRequirements()
     {
         for (int i = 0; i < 3; i++)
         {
             int colorInt = Mathf.FloorToInt(Random.Range(0, 4));
             if (colorInt == 0)
             {
-                colors[i] = Color.blue;
+                images[i].color = Color.blue;
+                requirements[i] = Resource.ResourceType.blue;
             }
             else if (colorInt == 1)
             {
-                colors[i] = Color.red;
+                images[i].color = Color.red;
+                requirements[i] = Resource.ResourceType.red;
             }
             else if (colorInt == 2)
             {
-                colors[i] = Color.yellow;
+                images[i].color = Color.yellow;
+                requirements[i] = Resource.ResourceType.yellow;
             }
             else if (colorInt == 3)
             {
-                colors[i] = Color.green;
+                images[i].color = Color.green;
+                requirements[i] = Resource.ResourceType.green;
             }
             else
             {
@@ -43,11 +72,65 @@ public class Request : MonoBehaviour
         }
     }
 
-    private void AssignColors()
+
+    // Drag & Drop
+
+    public void OnDrop(PointerEventData eventData)
     {
-        for (int i = 0; i < 3; i++)
+        Debug.Log(eventData.pointerDrag.name + " was dropped on " + gameObject.name);
+        resource = eventData.pointerDrag.GetComponent<Resource>();
+        if (resource != null)
         {
-            images[i].GetComponent<Image>().color = colors[i];
+            for (int i = 0; i < requirements.Length; i++)
+            {
+                if (requirements[i] == resource.resourceType)
+                {
+                    fulfilledReqs[i] = requirements[i];
+                    requirements[i] = Resource.ResourceType.none;
+                    resource.parentReturn = cardHolder.transform;
+                    return;
+                }
+            }
+            if (resource.parentReturn != cardHolder.transform)
+            {
+                for (int i = 0; i < requirements.Length; i++)
+                {
+                    if (fulfilledReqs[i] == resource.resourceType)
+                    {
+                        requirements[i] = fulfilledReqs[i];
+                        fulfilledReqs[i] = Resource.ResourceType.none;
+                        //resource.pickedUp = false;
+                        return;
+                    }
+                }
+            }
+
         }
     }
+
+
+    public void OnPickup()
+    {
+        //Debug.Log(eventData.pointerDrag.name + " was picked up from top of " + gameObject.name);
+        //resource = eventData.pointerDrag.GetComponent<Resource>();
+        if (resource != null)
+        {
+            for (int i = 0; i < requirements.Length; i++)
+            {
+                if (fulfilledReqs[i] == resource.resourceType)
+                {
+                    requirements[i] = fulfilledReqs[i];
+                    fulfilledReqs[i] = Resource.ResourceType.none;
+                    //resource.pickedUp = false;
+                    return;
+                }
+            }
+        }
+    }
+
+    private void DestroyRequest()
+    {
+
+    }
 }
+
