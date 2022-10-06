@@ -5,22 +5,29 @@ using TMPro;
 
 public class ProgressTracker : MonoBehaviour
 {
-    private int moneyBank = 10;
-    private int reputationBank = 1;
+    public int moneyBank;
+    private int reputationBank;
 
     public TMP_Text moneyText;
     public TMP_Text repText;
 
-    private void Update()
+    private void Start()
     {
-        moneyText.text = "€: " + moneyBank;
+        moneyBank = 15;
+        reputationBank = 1;
+    }
+
+    public void Update()
+    {
+        moneyText.text = "€: " + this.moneyBank;
         repText.text = "Reputation: " + reputationBank;
     }
 
     public void UpdateMoney(int money)
     {
-        Debug.Log("Adding money");
-        moneyBank += money;
+        Debug.Log("Adding " + money + "€");
+        moneyBank = moneyBank + money;
+        Debug.Log(moneyBank);
     }
 
     public void UpdateReputation(int reputation)

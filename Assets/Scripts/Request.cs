@@ -24,6 +24,8 @@ public class Request : MonoBehaviour, IDropHandler
     private int reputationGain;
     private int reputationLoss;
 
+    private bool isCompleted = false;
+
     private void Start()
     {
         CreateRequirements();
@@ -41,6 +43,10 @@ public class Request : MonoBehaviour, IDropHandler
             + fulfilledReqs[0]
             + ", " + fulfilledReqs[1]
             + ", " + fulfilledReqs[2];
+
+        if (isCompleted == true)
+            DestroyRequest(true);
+
     }
 
     private void CreateRequirements()
@@ -124,11 +130,12 @@ public class Request : MonoBehaviour, IDropHandler
                     requirements[i] = Resource.ResourceType.none;
                     resource.parentReturn = cardHolder.transform;
                     if (fulfilledReqs[0] != Resource.ResourceType.none && fulfilledReqs[1] != Resource.ResourceType.none && fulfilledReqs[2] != Resource.ResourceType.none)
-                    {
-                        DestroyRequest(true);
-                    }
+                        isCompleted = true;
                     return;
                 }
+            }
+            {
+                DestroyRequest(true);
             }
         }
     }
@@ -153,7 +160,8 @@ public class Request : MonoBehaviour, IDropHandler
     private void DestroyRequest(bool completed)
     {
         Resource[] r = cardHolder.GetComponentsInChildren<Resource>();
-        Debug.Log("Resource Array Length: " + r.Length);
+
+        tracker = 
         for (int i = 0; i < r.Length; i++)
         {
             Debug.Log("Setting origin parent for " + r[i].name);
@@ -165,12 +173,13 @@ public class Request : MonoBehaviour, IDropHandler
             Debug.Log("Request completed");
             tracker.UpdateMoney(payAmount);
             tracker.UpdateReputation(reputationGain);
+            isCompleted = false;
         }
         else if (completed == false)
         {
             tracker.UpdateReputation(-reputationLoss);
         }
-        Destroy(this.gameObject, 1);
+        Destroy(this.gameObject);
     }
 }
 
