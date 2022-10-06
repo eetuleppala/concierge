@@ -7,6 +7,7 @@ public class Resource : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
 {
     private Vector2 dragOffset;
     public Transform parentReturn = null;
+    public Transform originParent;
 
     private Request request;
 
@@ -15,10 +16,47 @@ public class Resource : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
 
     public Image image;
 
+    private void Start()
+    {
+        originParent = this.transform.parent;
+        RandomizeColor();
+    }
 
     private void Update()
     {
         UpdateColor();
+    }
+
+    private void RandomizeColor()
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            int colorInt = Mathf.FloorToInt(Random.Range(0, 4));
+            if (colorInt == 0)
+            {
+                image.color = Color.blue;
+                resourceType = Resource.ResourceType.blue;
+            }
+            else if (colorInt == 1)
+            {
+                image.color = Color.red;
+                resourceType = Resource.ResourceType.red;
+            }
+            else if (colorInt == 2)
+            {
+                image.color = Color.yellow;
+                resourceType = Resource.ResourceType.yellow;
+            }
+            else if (colorInt == 3)
+            {
+                image.color = Color.green;
+                resourceType = Resource.ResourceType.green;
+            }
+            else
+            {
+                Debug.Log("Error choosing color");
+            }
+        }
     }
 
     private void UpdateColor()
@@ -40,8 +78,6 @@ public class Resource : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
             image.color = Color.green; 
         }
     }
-
-
 
 
     // Drag & Drop

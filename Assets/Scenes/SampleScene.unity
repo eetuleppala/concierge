@@ -685,6 +685,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 980732614}
     m_Modifications:
+    - target: {fileID: 2330526826251367058, guid: 02706ec75456d4dbbb570e1745014ca5, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2577061877992156178, guid: 02706ec75456d4dbbb570e1745014ca5, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4720857413857893226, guid: 02706ec75456d4dbbb570e1745014ca5, type: 3}
       propertyPath: m_Name
       value: RequestCard
@@ -1170,6 +1178,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 980732614}
     m_Modifications:
+    - target: {fileID: 2330526826251367058, guid: 02706ec75456d4dbbb570e1745014ca5, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2577061877992156178, guid: 02706ec75456d4dbbb570e1745014ca5, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4720857413857893226, guid: 02706ec75456d4dbbb570e1745014ca5, type: 3}
       propertyPath: m_Name
       value: RequestCard (1)

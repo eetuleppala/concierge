@@ -14,12 +14,20 @@ public class Request : MonoBehaviour, IDropHandler
     public Image cardHolder;
 
     public TMP_Text debugText;
+    public TMP_Text propertiesText;
+    public ProgressTracker tracker;
 
     private Resource resource;
+
+    private int timeToComplete;
+    private int payAmount;
+    private int reputationGain;
+    private int reputationLoss;
 
     private void Start()
     {
         CreateRequirements();
+        CreateProperties();
     }
 
     private void Update()
@@ -33,11 +41,6 @@ public class Request : MonoBehaviour, IDropHandler
             + fulfilledReqs[0]
             + ", " + fulfilledReqs[1]
             + ", " + fulfilledReqs[2];
-
-        //if (resource != null && resource.pickedUp == true)
-        //{
-        //    OnPickup();
-        //}
     }
 
     private void CreateRequirements()
@@ -72,13 +75,45 @@ public class Request : MonoBehaviour, IDropHandler
         }
     }
 
+    private void CreateProperties()
+    {
+        timeToComplete = Random.Range(20, 60);
 
-    // Drag & Drop
+        //hardcoded probabilities for payAmount
+        float rand = Random.value;
+        if (rand <= .5f)
+            payAmount = Random.Range(0, 10);
+        if (rand <= .8f)
+            payAmount = Random.Range(11, 20);
+        else
+            payAmount = Random.Range(21, 50);
+
+        //hardcoded probabilities for reputationGain
+        rand = Random.value;
+        if (rand <= .6f)
+            reputationGain = Random.Range(0, 6);
+        if (rand <= .9f)
+            reputationGain = Random.Range(7, 15);
+        else
+            reputationGain = Random.Range(16, 30);
+
+        //hardcoded probabilities for reputationLoss
+        rand = Random.value;
+        if (rand <= .95f)
+            reputationLoss = Random.Range(0, 4);
+        else
+            reputationLoss = Random.Range(5, 10);
+
+        propertiesText.text = "$: " + payAmount + "RepGain: " + reputationGain + "RepLoss: " + reputationLoss;
+    }
+
+
+    // Drag & Drop, Update request status, Assess completion, Destroy
 
     public void OnDrop(PointerEventData eventData)
     {
         resource = eventData.pointerDrag.GetComponent<Resource>();
-        Debug.Log(resource.name + " was dropped on " + gameObject.name);
+        //Debug.Log(resource.name + " was dropped on " + gameObject.name);
         if (resource != null)
         {
             for (int i = 0; i < requirements.Length; i++)
@@ -88,29 +123,20 @@ public class Request : MonoBehaviour, IDropHandler
                     fulfilledReqs[i] = requirements[i];
                     requirements[i] = Resource.ResourceType.none;
                     resource.parentReturn = cardHolder.transform;
+                    if (fulfilledReqs[0] != Resource.ResourceType.none && fulfilledReqs[1] != Resource.ResourceType.none && fulfilledReqs[2] != Resource.ResourceType.none)
+                    {
+                        DestroyRequest(true);
+                    }
                     return;
                 }
             }
-            /*if (resource.parentReturn != cardHolder.transform)
-            {
-                for (int i = 0; i < requirements.Length; i++)
-                {
-                    if (fulfilledReqs[i] == resource.resourceType)
-                    {
-                        requirements[i] = fulfilledReqs[i];
-                        fulfilledReqs[i] = Resource.ResourceType.none;
-                        resource = null;
-                        return;
-                    }
-                }
-            }*/
         }
     }
 
     public void OnPickup()
     {
-        Debug.Log(resource.name + " was picked up from top of " + gameObject.name);
-        if (resource != null) // && resource.parentReturn != cardHolder.transform)
+        //Debug.Log(resource.name + " was picked up from top of " + gameObject.name);
+        if (resource != null)
         {
             for (int i = 0; i < requirements.Length; i++)
             {
@@ -124,9 +150,27 @@ public class Request : MonoBehaviour, IDropHandler
         }
     }
 
-    private void DestroyRequest()
+    private void DestroyRequest(bool completed)
     {
+        Resource[] r = cardHolder.GetComponentsInChildren<Resource>();
+        Debug.Log("Resource Array Length: " + r.Length);
+        for (int i = 0; i < r.Length; i++)
+        {
+            Debug.Log("Setting origin parent for " + r[i].name);
+            r[i].transform.SetParent(r[i].originParent);
+        }
 
+        if (completed == true)
+        {
+            Debug.Log("Request completed");
+            tracker.UpdateMoney(payAmount);
+            tracker.UpdateReputation(reputationGain);
+        }
+        else if (completed == false)
+        {
+            tracker.UpdateReputation(-reputationLoss);
+        }
+        Destroy(this.gameObject, 1);
     }
 }
 
