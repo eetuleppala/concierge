@@ -16,10 +16,10 @@ public class Resource : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
 
     public Image image;
 
-    private void Start()
+    private void Awake()
     {
         originParent = this.transform.parent;
-        RandomizeColor();
+        //RandomizeColor();
     }
 
     private void Update()
@@ -27,7 +27,7 @@ public class Resource : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDrag
         UpdateColor();
     }
 
-    private void RandomizeColor()
+    public void RandomizeColor()
     {
         for (int i = 0; i < 3; i++)
         {

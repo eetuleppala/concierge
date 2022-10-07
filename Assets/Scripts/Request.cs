@@ -7,27 +7,39 @@ using TMPro;
 
 public class Request : MonoBehaviour, IDropHandler
 {
-    public Resource.ResourceType[] requirements = new Resource.ResourceType[3];
-    public Resource.ResourceType[] fulfilledReqs = new Resource.ResourceType[3];
+    private Resource.ResourceType[] requirements;
+    private Resource.ResourceType[] fulfilledReqs;
 
-    public Image[] images;
+    public Image[] requirementCols;
     public Image cardHolder;
+    public Image declineButton;
 
     public TMP_Text debugText;
     public TMP_Text propertiesText;
-    public ProgressTracker tracker;
+    private ProgressTracker tracker;
 
     private Resource resource;
 
-    private int timeToComplete;
+    public float requestTime = 60f;
+    public Slider requestTimer;
+    public float completeTime = 30f;
+    public Slider completeTimer;
+
     private int payAmount;
     private int reputationGain;
     private int reputationLoss;
 
+    private bool hasRequirements = false;
     private bool isCompleted = false;
 
     private void Start()
     {
+        requirements = new Resource.ResourceType[3];
+        fulfilledReqs = new Resource.ResourceType[3];
+        tracker = GameObject.Find("ProgressTracker").GetComponent<ProgressTracker>();
+        requestTimer.maxValue = requestTime;
+        completeTimer.maxValue = completeTime;
+
         CreateRequirements();
         CreateProperties();
     }
@@ -44,34 +56,55 @@ public class Request : MonoBehaviour, IDropHandler
             + ", " + fulfilledReqs[1]
             + ", " + fulfilledReqs[2];
 
+        if (requestTimer.value < requestTimer.maxValue)
+            requestTimer.value += Time.deltaTime;
+        else
+            DestroyRequest(false, false);
+
+        if (hasRequirements == true)
+        {
+            requestTimer.gameObject.SetActive(false);
+            completeTimer.gameObject.SetActive(true);
+            if (completeTimer.value < completeTimer.maxValue)
+                completeTimer.value += Time.deltaTime;
+            else if (completeTimer.value >= completeTimer.maxValue)
+                isCompleted = true;
+        }
+        else
+        {
+            requestTimer.gameObject.SetActive(true);
+            completeTimer.gameObject.SetActive(false);
+        }
+
+
         if (isCompleted == true)
-            DestroyRequest(true);
+            DestroyRequest(true, false);
 
     }
 
     private void CreateRequirements()
     {
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < requirementCols.Length; i++)
         {
             int colorInt = Mathf.FloorToInt(Random.Range(0, 4));
             if (colorInt == 0)
             {
-                images[i].color = Color.blue;
+                requirementCols[i].color = Color.blue;
                 requirements[i] = Resource.ResourceType.blue;
             }
             else if (colorInt == 1)
             {
-                images[i].color = Color.red;
+                requirementCols[i].color = Color.red;
                 requirements[i] = Resource.ResourceType.red;
             }
             else if (colorInt == 2)
             {
-                images[i].color = Color.yellow;
+                requirementCols[i].color = Color.yellow;
                 requirements[i] = Resource.ResourceType.yellow;
             }
             else if (colorInt == 3)
             {
-                images[i].color = Color.green;
+                requirementCols[i].color = Color.green;
                 requirements[i] = Resource.ResourceType.green;
             }
             else
@@ -83,8 +116,6 @@ public class Request : MonoBehaviour, IDropHandler
 
     private void CreateProperties()
     {
-        timeToComplete = Random.Range(20, 60);
-
         //hardcoded probabilities for payAmount
         float rand = Random.value;
         if (rand <= .5f)
@@ -97,24 +128,28 @@ public class Request : MonoBehaviour, IDropHandler
         //hardcoded probabilities for reputationGain
         rand = Random.value;
         if (rand <= .6f)
-            reputationGain = Random.Range(0, 6);
+            reputationGain = Random.Range(0, 2);
         if (rand <= .9f)
-            reputationGain = Random.Range(7, 15);
+            reputationGain = Random.Range(3, 4);
         else
-            reputationGain = Random.Range(16, 30);
+            reputationGain = Random.Range(5, 6);
 
         //hardcoded probabilities for reputationLoss
         rand = Random.value;
-        if (rand <= .95f)
-            reputationLoss = Random.Range(0, 4);
+        if (rand <= .6f)
+            reputationLoss = Random.Range(1, 3);
+        if (rand <= .9f)
+            reputationLoss = Random.Range(4, 5);
         else
-            reputationLoss = Random.Range(5, 10);
+            reputationLoss = Random.Range(6, 7);
 
-        propertiesText.text = "$: " + payAmount + "RepGain: " + reputationGain + "RepLoss: " + reputationLoss;
+        propertiesText.text = "$: " + payAmount + " RepGain: " + reputationGain + " RepLoss: " + reputationLoss + " Time: " + completeTime;
     }
 
 
     // Drag & Drop, Update request status, Assess completion, Destroy
+
+    // TO DO: create UpdateRequirements method that has both OnDrop and OnPickup contents, those only call that method with certain property
 
     public void OnDrop(PointerEventData eventData)
     {
@@ -130,12 +165,9 @@ public class Request : MonoBehaviour, IDropHandler
                     requirements[i] = Resource.ResourceType.none;
                     resource.parentReturn = cardHolder.transform;
                     if (fulfilledReqs[0] != Resource.ResourceType.none && fulfilledReqs[1] != Resource.ResourceType.none && fulfilledReqs[2] != Resource.ResourceType.none)
-                        isCompleted = true;
+                        hasRequirements = true;
                     return;
                 }
-            }
-            {
-                DestroyRequest(true);
             }
         }
     }
@@ -157,11 +189,10 @@ public class Request : MonoBehaviour, IDropHandler
         }
     }
 
-    private void DestroyRequest(bool completed)
+    public void DestroyRequest(bool completed, bool declined)
     {
         Resource[] r = cardHolder.GetComponentsInChildren<Resource>();
 
-        tracker = 
         for (int i = 0; i < r.Length; i++)
         {
             Debug.Log("Setting origin parent for " + r[i].name);
@@ -175,10 +206,14 @@ public class Request : MonoBehaviour, IDropHandler
             tracker.UpdateReputation(reputationGain);
             isCompleted = false;
         }
-        else if (completed == false)
+        else if (completed == false && declined == false)
         {
+            Debug.Log("Request failed");
             tracker.UpdateReputation(-reputationLoss);
         }
+        else if (declined == true)
+            tracker.UpdateReputation((-reputationLoss) / 2);
+
         Destroy(this.gameObject);
     }
 }
